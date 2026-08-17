@@ -15,7 +15,8 @@ class User(Base):
     username=Column(String, unique=True, index=True)
     hashed_password=Column(String)
     email=Column(String, unique=True)
-    relation_user=relationship("Application", back_populates="relation_application_to_user")
+    
+    applications=relationship("Application", back_populates="user")
 
 class Application(Base):
     __tablename__="applications"
@@ -28,8 +29,8 @@ class Application(Base):
     date=Column(DateTime)
     applied_through_email=Column(Boolean)
 
-    relation_application_to_user=relationship("User", foreign_keys=["Application.user_id"], back_populates="relation_user")
-    relation_application_to_history=relationship("ApplicationHistory", back_populates="relation_history")
+    user=relationship("User", back_populates="applications")
+    history=relationship("ApplicationHistory", back_populates="applications")
 
 class ApplicationHistory(Base):
     __tablename__= "history"
@@ -42,4 +43,4 @@ class ApplicationHistory(Base):
     changed_through_email=Column(Boolean)
     email=Column(String, nullable=True)
 
-    relation_history=relationship("Application", foreign_keys=["ApplicationHistory.application_id"], back_populates="relation_application_to_history")
+    applications=relationship("Application", back_populates="history")
