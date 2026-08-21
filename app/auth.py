@@ -98,7 +98,7 @@ def decode_token(token:str):
          raise HTTPException(401, "Invalid or Expired token")
 
 
-def get_current_user(db, credentials: HTTPAuthorizationCredentials= Depends(security)):
+def get_current_user(db= Depends(get_db), credentials: HTTPAuthorizationCredentials= Depends(security)):
     token= None
     if credentials:
          token= credentials.credentials
