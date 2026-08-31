@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException, Response, Request
 from app.database import get_db
 from app.schemas import UserCreate, UserLogin, UserResponse, ApplicationCreate, ApplicationResponse, ApplicationUpdate
 from app.crud import create_application, update_application, get_applications, delete_application
+from app.tasks import task
 
 
 app=FastAPI()
@@ -37,3 +38,9 @@ def update(data:ApplicationUpdate, application_id: int, db= Depends(get_db), use
 def delete(application_id:int, db= Depends(get_db), user= Depends(get_current_user)):
     delete_application(application_id, db, user)
     return {"message": "application deleted successfully"}
+
+
+@app.post("/scan-emails")
+def scan_emails(user= Depends(get_current_user)):
+    task.delay(user.user_id)
+    return {"message": "email scan started"}
