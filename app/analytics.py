@@ -1,0 +1,50 @@
+from app.auth import user_register, user_login, get_current_user
+from fastapi import FastAPI, Depends, HTTPException, Response, Request
+from app.database import get_db
+from app.schemas import UserCreate, UserLogin, UserResponse, ApplicationCreate, ApplicationResponse, ApplicationUpdate
+from app.crud import create_application, update_application, get_applications, delete_application
+from app.models import User, Application, ApplicationHistory
+from sqlalchemy import text
+
+
+def get_status_counts(user_id, db):
+    result= db.execute(
+        text("""
+            SELECT status, COUNT(*) as count
+            FROM applications
+            WHERE user_id= :user_id
+            GROUP BY status
+        """),
+        {
+            "user_id": user_id,         
+        }
+    )
+    rows= result.fetchall()
+    return rows
+
+
+def get_applications_per_week(user_id, db):
+
+    result= db.execute(
+        text("""
+        SELECT DATE_TRUNC('week', date) as week, COUNT(*) as count
+        FROM applications
+        WHERE user_id= :user_id
+        GROUP BY week
+        ORDER BY week
+        """),
+        {
+            "user_id": user_id
+        }
+    )
+    rows= result.fetchall()
+    return rows
+
+
+def get_response_rate(user_id, db):
+    result= db.execute(
+        text("""
+        SELECT 
+        """)
+    )
+    
