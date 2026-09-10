@@ -42,9 +42,23 @@ def get_applications_per_week(user_id, db):
 
 
 def get_response_rate(user_id, db):
-    result= db.execute(
+
+    result = db.execute(
         text("""
-        SELECT 
-        """)
+            SELECT
+                COUNT(CASE
+                    WHEN status IN ('interviewing', 'offered')
+                    THEN 1
+                END) * 100.0 / COUNT(*) AS response_rate
+            FROM applications
+            WHERE user_id = :user_id
+        """),
+        {
+            "user_id": user_id,
+        }
     )
+
+    response_rate = result.scalar()
+
+    return response_rate
     
