@@ -62,3 +62,21 @@ def get_response_rate(user_id, db):
 
     return response_rate
     
+
+def company_count(user_id, db):
+    result= db.execute(
+        text("""
+        SELECT company_name, COUNT(*) as count
+        FROM applications
+        WHERE user_id = :user_id
+        GROUP BY company_name
+        """),
+        {
+            "user_id": user_id
+        }
+    )
+
+    rows= result.fetchall()
+    return rows
+
+
