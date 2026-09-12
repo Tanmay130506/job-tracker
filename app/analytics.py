@@ -80,3 +80,29 @@ def company_count(user_id, db):
     return rows
 
 
+def average_days_to_response(user_id, db):
+    result = db.execute(
+        text("""
+            SELECT AVG(
+                EXTRACT(
+                    EPOCH FROM (first_response.first_response_date - applications.date)
+                ) / 86400
+            ) AS average_days
+            FROM applications
+            JOIN (
+                SELECT
+                    application_id,
+                    MIN(date) AS first_response_date
+                FROM history
+                WHERE new_status IN ('interviewing', 'offered')
+                GROUP BY application_id
+            ) AS first_response
+            ON applications.application_id = first_response.application_id
+            WHERE applications.user_id = :user_id
+        """),
+        {
+            "user_id": user_id
+        }
+    )
+
+    return result.scalar()
