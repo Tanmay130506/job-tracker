@@ -4,6 +4,7 @@ from app.database import get_db
 from app.schemas import UserCreate, UserLogin, UserResponse, ApplicationCreate, ApplicationResponse, ApplicationUpdate
 from app.crud import create_application, update_application, get_applications, delete_application
 from app.tasks import task
+from app.analytics import get_status_counts, get_applications_per_week, get_response_rate, company_count, average_days_to_response
 
 
 app=FastAPI()
@@ -44,3 +45,28 @@ def delete(application_id:int, db= Depends(get_db), user= Depends(get_current_us
 def scan_emails(user= Depends(get_current_user)):
     task.delay(user.user_id)
     return {"message": "email scan started"}
+
+
+@app.get("/analytics/status-counts")
+def status_counts(user= Depends(get_current_user), db= Depends(get_db)):
+    return get_status_counts(user.user_id, db)
+
+
+@app.get("/analytics/applications-per-week")
+def applications_per_week(user= Depends(get_current_user), db= Depends(get_db)):
+    return get_applications_per_week(user.user_id, db)
+
+
+@app.get("/analytics/response-rate")
+def response_rate(user= Depends(get_current_user), db= Depends(get_db)):
+    return get_response_rate(user.user_id, db)
+
+
+@app.get("/analytics/company-breakdown")
+def company_breakdown(user= Depends(get_current_user), db= Depends(get_db)):
+    return company_count(user.user_id, db)
+
+
+@app.get("/analytics/average-response-days")
+def average_response_days(user= Depends(get_current_user), db= Depends(get_db)):
+    return average_days_to_response(user.user_id, db)

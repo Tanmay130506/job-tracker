@@ -1,9 +1,3 @@
-from app.auth import user_register, user_login, get_current_user
-from fastapi import FastAPI, Depends, HTTPException, Response, Request
-from app.database import get_db
-from app.schemas import UserCreate, UserLogin, UserResponse, ApplicationCreate, ApplicationResponse, ApplicationUpdate
-from app.crud import create_application, update_application, get_applications, delete_application
-from app.models import User, Application, ApplicationHistory
 from sqlalchemy import text
 
 
