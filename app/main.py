@@ -5,9 +5,19 @@ from app.schemas import UserCreate, UserLogin, UserResponse, ApplicationCreate, 
 from app.crud import create_application, update_application, get_applications, delete_application
 from app.tasks import task
 from app.analytics import get_status_counts, get_applications_per_week, get_response_rate, company_count, average_days_to_response
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app=FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/register")
