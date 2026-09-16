@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Tracker — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Top bar: brand, logged-in user, global actions -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-brand">Job Tracker</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-user" id="current-username"></span>
+      <button class="btn-secondary" id="sync-btn">Sync Gmail</button>
+      <button class="btn-text" id="logout-btn">Log out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Quick numbers -->
+    <section>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Total applications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-companies">—</div>
+          <div class="stat-label">Companies applied to</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-response-rate">—</div>
+          <div class="stat-label">Response rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-avg-days">—</div>
+          <div class="stat-label">Avg. days to response</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section>
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Applications per week</h3>
+          <canvas id="chart-per-week"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Status breakdown</h3>
+          <canvas id="chart-status"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Applications table -->
+    <section>
+      <div class="section-heading">
+        <h2>Applications</h2>
+        <button class="btn-primary" id="add-application-btn">+ New application</button>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Source</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="applications-body">
+            <!-- rows are inserted here by dashboard.js -->
+          </tbody>
+        </table>
+        <div class="empty-state" id="empty-state" style="display:none;">
+          <strong>No applications yet</strong>
+          Add one manually, or sync your Gmail to pull them in automatically.
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Add application modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h2>New application</h2>
+      <form class="modal-form" id="application-form">
+        <div>
+          <label class="field-label" for="app-company">Company</label>
+          <input type="text" id="app-company" placeholder="Acme Corp" required />
+        </div>
+        <div>
+          <label class="field-label" for="app-role">Role</label>
+          <input type="text" id="app-role" placeholder="Backend Engineer" required />
+        </div>
+        <div>
+          <label class="field-label" for="app-status">Status</label>
+          <select id="app-status">
+            <option value="applied">Applied</option>
+            <option value="interviewing">Interviewing</option>
+            <option value="offered">Offered</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="app-date">Date applied</label>
+          <input type="date" id="app-date" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn-primary" id="app-submit-btn">Add application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Small floating status message, e.g. after triggering a Gmail sync -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
