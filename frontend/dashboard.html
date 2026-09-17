@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JobTrack — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="brand">Job<span>Track</span></div>
+    <div class="nav-right">
+      <span id="user-greeting"></span>
+      <button class="btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ANALYTICS STAT CARDS -->
+    <div class="section-heading">Overview</div>
+    <div class="analytics-grid" id="analytics-grid">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- GMAIL SCAN -->
+    <div class="scan-section">
+      <div>
+        <div style="font-weight:600; font-size:15px;">Scan Gmail</div>
+        <p>Let JobTrack auto-detect job emails and update your tracker.</p>
+      </div>
+      <button class="btn-primary" onclick="scanEmails()">Scan now</button>
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div class="section-heading">
+      Applications
+      <button class="btn-primary" onclick="toggleAddForm()">+ Add</button>
+    </div>
+
+    <!-- ADD APPLICATION FORM -->
+    <div class="add-form" id="add-form">
+      <div class="form-grid">
+        <div class="field">
+          <label>Company name *</label>
+          <input type="text" id="f-company" placeholder="Google"/>
+        </div>
+        <div class="field">
+          <label>Role *</label>
+          <input type="text" id="f-role" placeholder="Software Engineer Intern"/>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="f-status">
+            <option value="applied">Applied</option>
+            <option value="interviewing">Interviewing</option>
+            <option value="offered">Offered</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Applied through email?</label>
+          <select id="f-email">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-sm" onclick="toggleAddForm()">Cancel</button>
+        <button class="btn-primary" onclick="addApplication()">Save</button>
+      </div>
+    </div>
+
+    <!-- APPLICATIONS TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="app-table-body">
+          <tr><td colspan="5" class="empty-state">Loading applications…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div id="toast"></div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
