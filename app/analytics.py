@@ -14,7 +14,7 @@ def get_status_counts(user_id, db):
         }
     )
     rows= result.fetchall()
-    return rows
+    return [{"status": row[0], "count": row[1]} for row in rows]
 
 
 def get_applications_per_week(user_id, db):
@@ -32,7 +32,7 @@ def get_applications_per_week(user_id, db):
         }
     )
     rows= result.fetchall()
-    return rows
+    return [{"week": str(row[0]), "count": row[1]} for row in rows]
 
 
 def get_response_rate(user_id, db):
@@ -71,7 +71,7 @@ def company_count(user_id, db):
     )
 
     rows= result.fetchall()
-    return rows
+    return [{"company_name": row[0], "count": row[1]} for row in rows]
 
 
 def average_days_to_response(user_id, db):

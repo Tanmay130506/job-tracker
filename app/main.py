@@ -6,6 +6,7 @@ from app.crud import create_application, update_application, get_applications, d
 from app.tasks import task
 from app.analytics import get_status_counts, get_applications_per_week, get_response_rate, company_count, average_days_to_response
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
 
 app=FastAPI()
@@ -35,7 +36,7 @@ def create(data: ApplicationCreate, db= Depends(get_db), user=Depends(get_curren
     return create_application(data, db, user)
 
 
-@app.get("/applications")
+@app.get("/applications", response_model=List[ApplicationResponse])
 def get(user= Depends(get_current_user), db= Depends(get_db)):
     return get_applications(user, db)
 

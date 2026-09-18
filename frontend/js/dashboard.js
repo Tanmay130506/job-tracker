@@ -241,8 +241,8 @@ async function loadAnalytics() {
     let total = 0;
     if (Array.isArray(statusData)) {
       statusData.forEach(row => {
-        counts[row[0]] = row[1]; /* row[0] = status string, row[1] = count */
-        total += row[1];
+        counts[row.status] = row.count;
+        total += row.count;
       });
     }
 
