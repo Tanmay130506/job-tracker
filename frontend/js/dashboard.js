@@ -160,7 +160,7 @@ async function updateApplication(appId, newStatus) {
 
     if (!res.ok) {
       const data = await res.json();
-      toast(data.detail || 'Update failed');
+      toast(typeof data.detail === 'string' ? data.detail : 'Invalid status. Use: applied, interviewing, offered, rejected');
       return;
     }
 

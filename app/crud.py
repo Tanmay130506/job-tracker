@@ -20,7 +20,7 @@ def create_application(data: ApplicationCreate, db, user):
         company_name=data.company_name,
         role=data.role,
         status=data.status,
-        date=data.date,
+        date=datetime.now(timezone.utc),
         applied_through_email=data.applied_through_email,
     )
 

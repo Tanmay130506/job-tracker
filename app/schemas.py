@@ -1,5 +1,15 @@
 from pydantic import BaseModel
+from typing import Optional
 from datetime import datetime
+from enum import Enum
+
+class StatusEnum(str, Enum):
+    applied = "applied"
+    interviewing = "interviewing"
+    offered = "offered"
+    rejected = "rejected"
+
+
 
 class UserCreate(BaseModel):
     username: str
@@ -21,7 +31,7 @@ class ApplicationCreate(BaseModel):
     company_name: str
     role: str
     status: str
-    date: datetime
+    date:  Optional[datetime] = None
     applied_through_email: bool
 
 class ApplicationResponse(BaseModel):
@@ -30,8 +40,9 @@ class ApplicationResponse(BaseModel):
     role: str
     status: str
     applied_through_email: bool
+    date: Optional[datetime] = None
     class Config:
         from_attributes= True
 
 class ApplicationUpdate(BaseModel):
-    status: str
+    status: StatusEnum

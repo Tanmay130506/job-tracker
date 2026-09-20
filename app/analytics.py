@@ -40,12 +40,12 @@ def get_response_rate(user_id, db):
     result = db.execute(
         text("""
             SELECT
-                COUNT(CASE
-                    WHEN status IN ('interviewing', 'offered')
-                    THEN 1
-                END) * 100.0 / COUNT(*) AS response_rate
-            FROM applications
-            WHERE user_id = :user_id
+    CASE 
+        WHEN COUNT(*) = 0 THEN 0
+        ELSE COUNT(CASE WHEN status IN ('interviewing', 'offered') THEN 1 END) * 100.0 / COUNT(*)
+    END AS response_rate
+FROM applications
+WHERE user_id = :user_id
         """),
         {
             "user_id": user_id,
