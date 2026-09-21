@@ -17,6 +17,9 @@ def task(user_id):
             subject, body, sender, date= get_email_content(service, message_id)
             status, company_name= parse_email(subject, body, sender)
 
+            if status is None:
+                continue
+
             application= db.query(Application).filter(Application.company_name==company_name,
                                                     Application.user_id==user_id).first()
 

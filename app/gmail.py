@@ -26,7 +26,7 @@ def get_gmail_service():
 
 def fetch_emails():
     service= get_gmail_service()
-    messages= service.users().messages().list(userId= "me", q= "application OR interview OR offer OR rejection OR shortlisted OR applied OR hired OR regret OR selected OR rejected").execute()
+    messages= service.users().messages().list(userId= "me", q= "application OR interview OR offer OR rejection OR shortlisted OR applied OR hired OR regret OR selected OR rejected", maxResults=10).execute()
     return messages.get("messages", [])
 
 

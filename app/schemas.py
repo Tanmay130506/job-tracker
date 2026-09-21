@@ -38,7 +38,7 @@ class ApplicationResponse(BaseModel):
     application_id: int
     company_name: str
     role: str
-    status: str
+    status: Optional[str] = None
     applied_through_email: bool
     date: Optional[datetime] = None
     class Config:
