@@ -1,4 +1,6 @@
-const API = "http://localhost:8000";
+const API = window.location.hostname === 'localhost' 
+  ? "http://localhost:8000" 
+  : "https://job-tracker-api-production-0b2e.up.railway.app";
 
 /* ── If no token found, user is not logged in — send to login page ── */
 if (!localStorage.getItem('token')) {
