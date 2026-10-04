@@ -44,3 +44,13 @@ class ApplicationHistory(Base):
     email=Column(String, nullable=True)
 
     applications=relationship("Application", back_populates="history")
+
+
+class GmailToken(Base):
+    __tablename__ = "gmail_tokens"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), unique=True)
+    token_data = Column(Text, nullable=False)  # stores token as JSON string
+    
+    user = relationship("User", backref="gmail_token")
