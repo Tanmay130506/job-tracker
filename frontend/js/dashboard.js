@@ -201,25 +201,40 @@ async function deleteApplication(appId) {
   }
 }
 
-/* ── Trigger Gmail background scan via Celery task ── */
-async function scanEmails() {
-  try {
-    const res = await fetch(`${API}/scan-emails`, {
-      method: 'POST',
-      headers: authHeaders()
-    });
-
-    if (!res.ok) {
-      toast('Could not start scan.');
-      return;
+// Check URL for gmail=connected parameter on page load
+window.addEventListener('load', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('gmail') === 'connected') {
+        toast('Gmail connected successfully!');
+        // Clean up URL
+        window.history.replaceState({}, '', '/dashboard.html');
     }
+});
 
-    /* The task runs in the background — response comes back immediately */
-    toast('Gmail scan started — check back in a moment.');
+// Connect Gmail — redirects to OAuth flow
+function connectGmail() {
+    const token = getToken();
+    window.location.href = `${API}/auth/gmail?token=${token}`;
+}
 
-  } catch (err) {
-    toast('Could not reach server.');
-  }
+// Scan emails — only works after Gmail is connected
+async function scanEmails() {
+    try {
+        const res = await fetch(`${API}/scan-emails`, {
+            method: 'POST',
+            headers: authHeaders()
+        });
+
+        if (!res.ok) {
+            toast('Could not start scan. Make sure Gmail is connected first.');
+            return;
+        }
+
+        toast('Gmail scan started — check back in a moment.');
+
+    } catch (err) {
+        toast('Could not reach server.');
+    }
 }
 
 /* ── Fetch all analytics endpoints and render the stat cards ── */

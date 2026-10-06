@@ -5,12 +5,13 @@ from app.celery_app import celery_app
 
 @celery_app.task
 def task(user_id):
+    from app.gmail import fetch_emails, get_email_content, parse_email, get_gmail_service_from_db
     db=SessionLocal()
 
-    service= get_gmail_service()
-    messages= fetch_emails()
-
     try:
+
+        service = get_gmail_service_from_db(user_id, db)
+        messages = fetch_emails(service)  # pass service as parameter
 
         for message in messages:
             message_id= message["id"]

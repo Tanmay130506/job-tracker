@@ -29,10 +29,13 @@
     <!-- GMAIL SCAN -->
     <div class="scan-section">
       <div>
-        <div style="font-weight:600; font-size:15px;">Scan Gmail</div>
-        <p>Let JobTrack auto-detect job emails and update your tracker.</p>
+        <div style="font-weight:600; font-size:15px;">Gmail Integration</div>
+        <p>Connect your Gmail to auto-detect job emails.</p>
       </div>
-      <button class="btn-primary" onclick="scanEmails()">Scan now</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-sm" onclick="connectGmail()">Connect Gmail</button>
+        <button class="btn-primary" onclick="scanEmails()">Scan now</button>
+      </div>
     </div>
 
     <!-- APPLICATIONS -->

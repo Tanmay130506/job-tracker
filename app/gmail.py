@@ -6,6 +6,8 @@ from googleapiclient.discovery import build
 import os
 import base64
 from email.utils import parseaddr
+from google.oauth2.credentials import Credentials
+import json
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
@@ -24,8 +26,7 @@ def get_gmail_service():
     return build("gmail", "v1", credentials=creds)
 
 
-def fetch_emails():
-    service= get_gmail_service()
+def fetch_emails(service):
     messages= service.users().messages().list(userId= "me", q= "application OR interview OR offer OR rejection OR shortlisted OR applied OR hired OR regret OR selected OR rejected", maxResults=10).execute()
     return messages.get("messages", [])
 
@@ -320,3 +321,34 @@ def parse_email(subject, body, sender):
 
 
     return status, company_name
+
+
+def get_gmail_service_from_db(user_id: int, db):
+    from app.models import GmailToken
+    
+    token_record = db.query(GmailToken).filter(GmailToken.user_id == user_id).first()
+    
+    if not token_record:
+        raise Exception("Gmail not connected for this user")
+    
+    token_data = json.loads(token_record.token_data)
+    
+    credentials = Credentials(
+        token=token_data["token"],
+        refresh_token=token_data["refresh_token"],
+        token_uri=token_data["token_uri"],
+        client_id=token_data["client_id"],
+        client_secret=token_data["client_secret"],
+        scopes=token_data["scopes"]
+    )
+    
+    # Refresh if expired
+    if credentials.expired and credentials.refresh_token:
+        from google.auth.transport.requests import Request
+        credentials.refresh(Request())
+        # Save refreshed token back to database
+        token_data["token"] = credentials.token
+        token_record.token_data = json.dumps(token_data)
+        db.commit()
+    
+    return build("gmail", "v1", credentials=credentials)
