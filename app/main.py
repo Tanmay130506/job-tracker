@@ -20,6 +20,8 @@ app=FastAPI()
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 credentials_json = os.environ.get("GOOGLE_CREDENTIALS")
 if credentials_json:
     creds_dict = json.loads(credentials_json)
@@ -114,10 +116,11 @@ def gmail_auth(token: str, db=Depends(get_db)):
         scopes=SCOPES,
         redirect_uri="https://job-tracker-api-production-0b2e.up.railway.app/auth/gmail/callback"
     )
+    flow.oauth2session.compliance_hook  # disable pkce
     auth_url, state = flow.authorization_url(
         access_type="offline",
-        include_granted_scopes="true",
-        state=str(user_id)
+        state=str(user_id),
+        prompt="consent"
     )
     return RedirectResponse(auth_url)
 
@@ -130,7 +133,8 @@ def gmail_callback(code: str, state: str, db=Depends(get_db)):
         redirect_uri="https://job-tracker-api-production-0b2e.up.railway.app/auth/gmail/callback",
         state=state
     )
-    flow.fetch_token(code=code)
+    flow.code_verifier = None
+    flow.fetch_token(code=code, client_secret=flow.client_config['client_secret'])
     
     credentials = flow.credentials
     token_data = {
