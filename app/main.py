@@ -116,13 +116,22 @@ def gmail_auth(token: str, db=Depends(get_db)):
         scopes=SCOPES,
         redirect_uri="https://job-tracker-api-production-0b2e.up.railway.app/auth/gmail/callback"
     )
-    flow.oauth2session.compliance_hook  # disable pkce
     auth_url, state = flow.authorization_url(
         access_type="offline",
         state=str(user_id),
-        prompt="consent"
+        prompt="consent",
+        include_granted_scopes="true"
     )
-    return RedirectResponse(auth_url)
+
+    # Remove code_challenge from URL if present
+    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+    parsed = urlparse(auth_url)
+    params = parse_qs(parsed.query)
+    params.pop('code_challenge', None)
+    params.pop('code_challenge_method', None)
+    clean_url = urlunparse(parsed._replace(query=urlencode(params, doseq=True)))
+
+    return RedirectResponse(clean_url)
 
 
 @app.get("/auth/gmail/callback")
@@ -134,7 +143,7 @@ def gmail_callback(code: str, state: str, db=Depends(get_db)):
         state=state
     )
     flow.code_verifier = None
-    flow.fetch_token(code=code, client_secret=flow.client_config['client_secret'])
+    flow.fetch_token(code=code)
     
     credentials = flow.credentials
     token_data = {
