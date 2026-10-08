@@ -172,3 +172,9 @@ def gmail_callback(code: str, state: str, db=Depends(get_db)):
     
     # Redirect back to frontend after successful connection
     return RedirectResponse("https://job-tracker-2.netlify.app/dashboard.html?gmail=connected")
+
+
+@app.get("/auth/gmail/status")
+def gmail_status(user=Depends(get_current_user), db=Depends(get_db)):
+    token = db.query(GmailToken).filter(GmailToken.user_id == user.user_id).first()
+    return {"connected": token is not None}

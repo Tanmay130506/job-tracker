@@ -217,16 +217,47 @@ function connectGmail() {
     window.location.href = `${API}/auth/gmail?token=${token}`;
 }
 
-// Scan emails — only works after Gmail is connected
+// Check Gmail connection status on page load
+async function checkGmailStatus() {
+    try {
+        const res = await fetch(`${API}/auth/gmail/status`, {
+            headers: authHeaders()
+        });
+        const data = await res.json();
+        
+        const connectBtn = document.getElementById('connect-gmail-btn');
+        if (data.connected) {
+            connectBtn.textContent = 'Gmail Connected';
+            connectBtn.disabled = true;
+            connectBtn.style.opacity = '0.6';
+            connectBtn.style.cursor = 'default';
+        }
+    } catch (err) {
+        console.error('Could not check Gmail status');
+    }
+}
+
+// Updated scanEmails with Gmail connection check
 async function scanEmails() {
     try {
+        // Check if Gmail is connected first
+        const statusRes = await fetch(`${API}/auth/gmail/status`, {
+            headers: authHeaders()
+        });
+        const statusData = await statusRes.json();
+        
+        if (!statusData.connected) {
+            toast('Please connect Gmail first before scanning.');
+            return;
+        }
+
         const res = await fetch(`${API}/scan-emails`, {
             method: 'POST',
             headers: authHeaders()
         });
 
         if (!res.ok) {
-            toast('Could not start scan. Make sure Gmail is connected first.');
+            toast('Could not start scan.');
             return;
         }
 
@@ -309,3 +340,4 @@ async function loadAnalytics() {
 /* ── On page load: fetch everything ── */
 loadApplications();
 loadAnalytics();
+checkGmailStatus();
