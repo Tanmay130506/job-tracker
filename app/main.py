@@ -178,3 +178,12 @@ def gmail_callback(code: str, state: str, db=Depends(get_db)):
 def gmail_status(user=Depends(get_current_user), db=Depends(get_db)):
     token = db.query(GmailToken).filter(GmailToken.user_id == user.user_id).first()
     return {"connected": token is not None}
+
+
+@app.delete("/auth/gmail/disconnect")
+def gmail_disconnect(user=Depends(get_current_user), db=Depends(get_db)):
+    token = db.query(GmailToken).filter(GmailToken.user_id == user.user_id).first()
+    if token:
+        db.delete(token)
+        db.commit()
+    return {"message": "Gmail disconnected"}

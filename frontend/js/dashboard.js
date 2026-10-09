@@ -157,11 +157,14 @@ function openUpdatePrompt(appId, currentStatus) {
     const btnRow = document.createElement('div');
     btnRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
     btnRow.innerHTML = `
-        <button onclick="this.closest('div[style]').remove()" style="background:none;border:1px solid #252840;border-radius:7px;color:#E8E9F3;padding:7px 14px;cursor:pointer;font-family:Inter,sans-serif;">Cancel</button>
-        <button id="confirm-update" style="background:#6C63FF;border:none;border-radius:7px;color:#fff;padding:8px 16px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Update</button>
+      <button id="cancel-update" style="background:none;border:1px solid #252840;border-radius:7px;color:#E8E9F3;padding:7px 14px;cursor:pointer;font-family:Inter,sans-serif;">Cancel</button>
+      <button id="confirm-update" style="background:#6C63FF;border:none;border-radius:7px;color:#fff;padding:8px 16px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Update</button>
     `;
     modal.appendChild(btnRow);
     document.body.appendChild(modal);
+    document.getElementById('cancel-update').onclick = () => {
+      modal.remove();
+    };
     
     document.getElementById('confirm-update').onclick = () => {
         const newStatus = select.value;
@@ -252,9 +255,33 @@ async function checkGmailStatus() {
             connectBtn.disabled = true;
             connectBtn.style.opacity = '0.6';
             connectBtn.style.cursor = 'default';
+            
+            // Add disconnect button next to it
+            const disconnectBtn = document.createElement('button');
+            disconnectBtn.textContent = 'Disconnect';
+            disconnectBtn.className = 'btn-sm';
+            disconnectBtn.style.color = 'var(--error)';
+            disconnectBtn.style.borderColor = 'var(--error)';
+            disconnectBtn.onclick = disconnectGmail;
+            connectBtn.parentNode.insertBefore(disconnectBtn, connectBtn.nextSibling);
         }
     } catch (err) {
         console.error('Could not check Gmail status');
+    }
+}
+
+async function disconnectGmail() {
+    try {
+        const res = await fetch(`${API}/auth/gmail/disconnect`, {
+            method: 'DELETE',
+            headers: authHeaders()
+        });
+        if (res.ok) {
+            toast('Gmail disconnected.');
+            window.location.reload();
+        }
+    } catch (err) {
+        toast('Could not disconnect.');
     }
 }
 
