@@ -140,15 +140,36 @@ async function addApplication() {
 /* ── Open a browser prompt asking for the new status ──
    In a bigger app this would be a custom modal */
 function openUpdatePrompt(appId, currentStatus) {
-  const newStatus = prompt(
-    `Current status: ${currentStatus}\n\nEnter new status:\napplied / interviewing / offered / rejected`,
-    currentStatus
-  );
-
-  /* If user cancelled or typed the same status, do nothing */
-  if (!newStatus || newStatus.trim().toLowerCase() === currentStatus) return;
-
-  updateApplication(appId, newStatus.trim().toLowerCase());
+    const statuses = ['applied', 'interviewing', 'offered', 'rejected'];
+    const options = statuses.map(s => 
+        `<option value="${s}" ${s === currentStatus ? 'selected' : ''}>${s}</option>`
+    ).join('');
+    
+    const select = document.createElement('select');
+    select.innerHTML = options;
+    select.style.cssText = 'background:#1A1D2E;color:#E8E9F3;border:1px solid #252840;border-radius:7px;padding:8px 12px;font-family:Inter,sans-serif;font-size:14px;';
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1A1D2E;border:1px solid #252840;border-radius:12px;padding:24px;z-index:999;display:flex;flex-direction:column;gap:16px;min-width:280px;';
+    modal.innerHTML = `<div style="font-weight:600;font-size:15px;">Update Status</div>`;
+    modal.appendChild(select);
+    
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
+    btnRow.innerHTML = `
+        <button onclick="this.closest('div[style]').remove()" style="background:none;border:1px solid #252840;border-radius:7px;color:#E8E9F3;padding:7px 14px;cursor:pointer;font-family:Inter,sans-serif;">Cancel</button>
+        <button id="confirm-update" style="background:#6C63FF;border:none;border-radius:7px;color:#fff;padding:8px 16px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Update</button>
+    `;
+    modal.appendChild(btnRow);
+    document.body.appendChild(modal);
+    
+    document.getElementById('confirm-update').onclick = () => {
+        const newStatus = select.value;
+        modal.remove();
+        if (newStatus !== currentStatus) {
+            updateApplication(appId, newStatus);
+        }
+    };
 }
 
 /* ── Send status update to the API ── */
