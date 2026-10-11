@@ -39,15 +39,25 @@ A full-stack web application that helps you track internship and job application
 
 ## Architecture
 
-User → Netlify (Frontend)
-↓
-Railway (FastAPI)
-↓ ↓
-PostgreSQL Redis
-↓
-Railway (Celery Worker)
-↓
-Gmail API
+```text
+User
+  |
+  v
+Netlify (Frontend)
+  |
+  | HTTPS API requests
+  v
+Railway (FastAPI Backend)
+  |------------------|
+  v                  v
+PostgreSQL          Redis
+                       |
+                       v
+                Railway (Celery Worker)
+                       |
+                       v
+                   Gmail API
+```
 
 ---
 
@@ -100,25 +110,27 @@ Gmail scanning uses OAuth 2.0. The app is currently in Google's testing mode —
 
 ## Project Structure
 
+```text
 job-tracker/
 ├── app/
-│ ├── main.py # FastAPI routes
-│ ├── models.py # SQLAlchemy models
-│ ├── schemas.py # Pydantic schemas
-│ ├── crud.py # Application CRUD logic
-│ ├── auth.py # Authentication logic
-│ ├── gmail.py # Gmail API integration
-│ ├── tasks.py # Celery background tasks
-│ ├── analytics.py # SQL analytics queries
-│ ├── celery_app.py # Celery configuration
-│ ├── database.py # Database connection
-│ └── config.py # Environment configuration
+│   ├── main.py          # FastAPI routes
+│   ├── models.py        # SQLAlchemy models
+│   ├── schemas.py       # Pydantic schemas
+│   ├── crud.py          # Application CRUD logic
+│   ├── auth.py          # Authentication logic
+│   ├── gmail.py         # Gmail API integration
+│   ├── tasks.py         # Celery background tasks
+│   ├── analytics.py     # SQL analytics queries
+│   ├── celery_app.py    # Celery configuration
+│   ├── database.py      # Database connection
+│   └── config.py        # Environment configuration
 ├── frontend/
-│ ├── index.html # Login/Register page
-│ ├── dashboard.html # Main dashboard
-│ ├── css/ # Stylesheets
-│ └── js/ # JavaScript files
-├── alembic/ # Database migrations
+│   ├── index.html       # Login/Register page
+│   ├── dashboard.html   # Main dashboard
+│   ├── css/             # Stylesheets
+│   └── js/              # JavaScript files
+├── alembic/             # Database migrations
 ├── Dockerfile
-├── render.yaml # Railway deployment config
+├── render.yaml          # Deployment configuration
 └── requirements.txt
+```
